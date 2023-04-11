@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "databaselistener"
+version = "0.1.0"
+description = ""
+authors = ["Danilo Nascimento <daconnas.dcn@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+mysqlclient = "^2.1.1"
+ipdb = "^0.13.13"
+psycopg2 = "^2.9.6"
+psycopg2-binary = "^2.9.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
