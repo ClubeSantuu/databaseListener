@@ -13,7 +13,8 @@ psycopg2 = "^2.9.6"
 psycopg2-binary = "^2.9.6"
 typer = "^0.7.0"
 rich = "^13.3.3"
-
+python-decouple = "^3.8"
+aiopg = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core"]
