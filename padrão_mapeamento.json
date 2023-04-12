@@ -1,0 +1,72 @@
+[
+    {
+        "core": {
+            "table_name": "custom_user",
+            "fields": {
+                "0": {
+                    "field": "uuid"
+                },
+                "1": {
+                    "table_name": "account_personal_info",
+                    "field": "cpf"
+                },
+                "2": {
+                    "table_name": "account_personal_info",
+                    "field": "cnpj"
+                },
+                "3": {
+                    "table_name": "account_personal_info",
+                    "field": {
+                        "table_name": "address",
+                        "field": "number"
+                    }
+                }
+            },
+            "filters": ["1", "2"]
+        },
+        "api": {
+            "table_name": "custom_user",
+            "fields": {
+                "0": {
+                    "field": "uuid"
+                },
+                "1": {
+                    "field": "cpf"
+                },
+                "2": {
+                    "field": "cnpj"
+                },
+                "3": {
+                    "field": "number"
+                }
+            },
+            "filters": ["1", "2"]
+        }
+    },
+    {
+        "core": {
+            "table_name": "address",
+            "fields": {
+                "0": {
+                    "field": "uuid"
+                },
+                "1": {
+                    "field": "name_1"
+                }
+            },
+            "filters": ["0"]
+        },
+        "api": {
+            "table_name": "address",
+            "fields": {
+                "0": {
+                    "field": "uuid"
+                },
+                "1": {
+                    "field": "name_1"
+                }
+            },
+            "filters": ["0"]
+        }
+    }
+]
