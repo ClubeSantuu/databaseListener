@@ -12,6 +12,10 @@ fd = open('db_data/field_name_translation.json', 'r')
 STRUCTURE_TRANSLATION = json.load(fd)
 fd.close()
 
+fd = open('db_data/removed_fields.json', 'r')
+REMOVED_FIELDS = json.load(fd)
+fd.close()
+
 def get_string_between(text, val_start, val_end):
     try:
         return text.split(val_start)[1].split(val_end)[0]
@@ -59,11 +63,7 @@ def replace_name_by_position(fields_to_remove):
     return fields_to_remove
 
 def get_field_position_to_remove(table_name):    
-    result = replace_name_by_position(
-        {
-            "voucher_voucher_shop_voucher": ["id"]
-        }
-    )
+    result = replace_name_by_position(REMOVED_FIELDS)
     try:
         return result[table_name]
     except KeyError:
@@ -145,9 +145,10 @@ def convert_sql(sql):
         if field_sequence is None:
             continue
         field_sequence = take_away_field(field_sequence + ";", positions_to_remove)
-        result = replace_string_between(result, "` ", "VALUES (", field_sequence + " ")
+        result = replace_string_between(result, "` VALUES ", "VALUES (", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
 converted = convert_sql(SQL)
-print(converted)
+with open("db_data/converted.sql", "w") as file:
+    file.write(converted)
