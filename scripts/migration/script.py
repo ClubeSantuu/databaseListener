@@ -12,10 +12,6 @@ fd = open('db_data/field_name_translation.json', 'r')
 STRUCTURE_TRANSLATION = json.load(fd)
 fd.close()
 
-fd = open('db_data/removed_fields.json', 'r')
-REMOVED_FIELDS = json.load(fd)
-fd.close()
-
 def get_string_between(text, val_start, val_end):
     try:
         return text.split(val_start)[1].split(val_end)[0]
@@ -62,10 +58,9 @@ def replace_name_by_position(fields_to_remove):
             table_values[i] = get_field_position_by_table_name(table_name, field)
     return fields_to_remove
 
-def get_field_position_to_remove(table_name):    
-    result = replace_name_by_position(REMOVED_FIELDS)
+def get_field_position_to_remove(table_name):
     try:
-        return result[table_name]
+        return REMOVED_FIELDS[table_name]
     except KeyError:
         return None
 
@@ -148,6 +143,11 @@ def convert_sql(sql):
         result = replace_string_between(result, "` VALUES ", "VALUES (", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
+
+fd = open('db_data/removed_fields.json', 'r')
+REMOVED_FIELDS = json.load(fd)
+REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
+fd.close()
 
 converted = convert_sql(SQL)
 with open("db_data/converted.sql", "w") as file:
