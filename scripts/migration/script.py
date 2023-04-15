@@ -44,6 +44,16 @@ def get_field_by_table_name(table_name):
 
     return f"({','.join(table_structure)})"
 
+
+def get_field_position_by_table_name(table_name: str, field: str):
+    try:
+        table_structure: list[str] = STRUCTURE[table_name]
+        return table_structure.index(field) + 1
+    except KeyError:
+        return None
+    except ValueError:
+        return None
+
 def get_field_position_to_vanish(table_name):
     # return {
     #     "custom_user": [1,2,3]
