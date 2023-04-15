@@ -9,8 +9,8 @@ parser.add_argument("--msql", required=True)
 args = parser.parse_args()
 
 
-def filter(file) -> list:
-    res = []
+def filter(file) -> dict:
+    table = {}
     get = False
     name = ""
     for line in file.readlines():
@@ -24,19 +24,15 @@ def filter(file) -> list:
         if line.upper().startswith("CREATE TABLE"):
             get = True
             name = line.split(" ")[2].replace("`","").split(".")[-1]
-            if name in [i for i in res]:
-                raise ValueError("no já existe")
 
-            table = {
-                name: []
-            }
+            table[name] = []
 
         if get and line.startswith(")") and line.endswith(";"):
             get = False
             del table[name][-1]
-            res.append(table)
+            # res.append(table)
 
-    return res
+    return table
 
 
 def save(file_name: str):
@@ -44,7 +40,7 @@ def save(file_name: str):
         obj = filter(file)
 
     with open(f"{file_name}.json", "w") as file:
-        json.dump(obj, file)
+        json.dump(obj, file, indent=4)
 
 
 save(args.pg)
