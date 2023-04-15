@@ -44,7 +44,16 @@ def get_field_by_table_name(table_name):
 
     return f"({','.join(table_structure)})"
 
-def get_field_position_to_vanish(table_name):
+def tuafuncao(a):
+    return 1
+
+def replace_name_by_position(fields_to_remove):
+    for table_name, table_values in fields_to_remove.items():
+        for i, field in enumerate(table_values):
+            table_values[i] = tuafuncao(field)
+    return fields_to_remove
+
+def get_field_position_to_remove(table_name):
     # return {
     #     "custom_user": [1,2,3]
     # }[table_name]
@@ -82,8 +91,9 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                 separator = ","
                 complete_with = ""
 
+            clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
+
             if position is None or not field_position in position:
-                clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
                 clean_value.append(f"{complete_with}{clean}{complete_with}")     
    
             there_is_next = value != "---end---"
@@ -107,13 +117,14 @@ def convert_sql(sql):
         table_name = get_table_name_from_insert(insert)
         if table_name is None:
             continue
-        positions_to_vanish = get_field_position_to_vanish(table_name)
-        values = take_away_field(values, positions_to_vanish)
+        positions_to_remove = get_field_position_to_remove(table_name)
+        values = take_away_field(values, positions_to_remove)
         result = convert_values_in_insert(insert, values)
         field_sequence = get_field_by_table_name(table_name)
         if field_sequence is None:
             continue
-        result = replace_string_between(result, "` ", "VALUES (", get_field_by_table_name(table_name) + " ")
+        field_sequence = take_away_field(field_sequence + ";", positions_to_remove)
+        result = replace_string_between(result, "` ", "VALUES (", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
@@ -122,4 +133,5 @@ sql = fd.read()
 fd.close()
 
 converted = convert_sql(sql)
-print(converted)
+# print(converted)
+breakpoint()
