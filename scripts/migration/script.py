@@ -1,7 +1,15 @@
 import json
 
-fd = open('old_db_structure.json', 'r')
+fd = open('db_data/apidb.sql', 'r')
+SQL = fd.read()
+fd.close()
+
+fd = open('db_data/old_db_structure.json', 'r')
 STRUCTURE = json.load(fd)
+fd.close()
+
+fd = open('db_data/field_name_translation.json', 'r')
+STRUCTURE_TRANSLATION = json.load(fd)
 fd.close()
 
 def get_string_between(text, val_start, val_end):
@@ -47,16 +55,22 @@ def get_field_by_table_name(table_name):
 def replace_name_by_position(fields_to_remove):
     for table_name, table_values in fields_to_remove.items():
         for i, field in enumerate(table_values):
-            table_values[i] = tuafuncao(field)
+            table_values[i] = get_field_position_by_table_name(table_name, field)
     return fields_to_remove
 
-def get_field_position_to_remove(table_name):
+def get_field_position_to_remove(table_name):    
     result = replace_name_by_position(
         {
             "voucher_voucher_shop_voucher": ["id"]
         }
     )
-    return result[table_name]
+    try:
+        return result[table_name]
+    except KeyError:
+        return None
+
+def replace_field_name(table_name, field_name):
+    return STRUCTURE_TRANSLATION[table_name][field_name]
 
 def get_field_position_by_table_name(table_name: str, field: str):
     try:
@@ -135,10 +149,5 @@ def convert_sql(sql):
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
-fd = open('apidb.sql', 'r')
-sql = fd.read()
-fd.close()
-
-converted = convert_sql(sql)
-# print(converted)
-breakpoint()
+converted = convert_sql(SQL)
+print(converted)
