@@ -44,9 +44,6 @@ def get_field_by_table_name(table_name):
 
     return f"({','.join(table_structure)})"
 
-def tuafuncao(a):
-    return 1
-
 def replace_name_by_position(fields_to_remove):
     for table_name, table_values in fields_to_remove.items():
         for i, field in enumerate(table_values):
@@ -54,11 +51,21 @@ def replace_name_by_position(fields_to_remove):
     return fields_to_remove
 
 def get_field_position_to_remove(table_name):
-    # return {
-    #     "custom_user": [1,2,3]
-    # }[table_name]
+    result = replace_name_by_position(
+        {
+            "voucher_voucher_shop_voucher": ["id"]
+        }
+    )
+    return result[table_name]
 
-    return None
+def get_field_position_by_table_name(table_name: str, field: str):
+    try:
+        table_structure: list[str] = STRUCTURE[table_name]
+        return table_structure.index(field) + 1
+    except KeyError:
+        return None
+    except ValueError:
+        return None
 
 def take_away_field(values = "(null,null),(null,null)", position = []):
     values = values[0:-1] # tirando ;
