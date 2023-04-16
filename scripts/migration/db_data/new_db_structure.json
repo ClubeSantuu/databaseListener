@@ -682,14 +682,6 @@
         "coverage_id",
         "insurance_claim_bike_part_id"
     ],
-    "insurance_claim_comment": [
-        "id",
-        "insurance_claim_comment",
-        "created_at",
-        "updated_at",
-        "insurance_claim_id",
-        "user_id"
-    ],
     "insurance_claim_coverages": [
         "id",
         "enabled",

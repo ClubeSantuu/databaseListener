@@ -57,7 +57,7 @@ def get_field_by_table_name(table_name):
 def remove_repeated_replace_into(insert, table_name, field_sequence):
     string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t"
     insert = insert.replace(string_to_remove, "----waiting----", 1) # só a  primeira ocorrência permanece
-    insert = insert.replace(string_to_remove, "")
+    insert = insert.replace(string_to_remove, ",\n")
     insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
     return insert
 
@@ -206,7 +206,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     
                 clean_value.append("{}{}{}".format(
                     complete_with,
-                    str(clean).replace("'", "\\'"),
+                    str(clean).replace("'", "[[[[ASPAS]]]]"),
                     complete_with,
                 ))     
    
