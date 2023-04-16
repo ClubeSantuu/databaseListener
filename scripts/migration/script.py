@@ -62,7 +62,7 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
     return insert
 
 def remove_comments(sql):
-    sql = re.sub(r'--.*\s', "", sql)
+    sql = re.sub(r'--.*\n', "", sql)
     sql = re.sub(r'/\*.*\*/;', "", sql)
     return sql
 
