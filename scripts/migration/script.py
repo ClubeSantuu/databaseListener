@@ -5,7 +5,11 @@ SQL = fd.read()
 fd.close()
 
 fd = open('db_data/old_db_structure.json', 'r')
-STRUCTURE = json.load(fd)
+OLD_STRUCTURE = json.load(fd)
+fd.close()
+
+fd = open('db_data/new_db_structure.json', 'r')
+NEW_STRUCTURE = json.load(fd)
 fd.close()
 
 fd = open('db_data/table_name_translation.json', 'r')
@@ -27,6 +31,9 @@ def get_string_between(text, val_start, val_end):
     except:
         return None
 
+def exists_in_new_db(table_name):
+    return table_name in NEW_STRUCTURE
+
 def replace_string_between(text, val_start, val_end, final):
     try:
         start = text.split(val_start, 1)[0]
@@ -40,7 +47,7 @@ def get_table_name_from_insert(insert):
 
 def get_field_by_table_name(table_name):
     try:
-        table_structure = STRUCTURE[table_name]
+        table_structure = OLD_STRUCTURE[table_name]
     except KeyError:
         return None
 
@@ -50,7 +57,7 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
     string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t".replace("`", "\"")
     insert = insert.replace(string_to_remove, "----waiting----", 1) # só a  primeira ocorrência permanece
     insert = insert.replace(string_to_remove, "")
-    insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)))
+    insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
     return insert
 
 def get_inserts_and_values(sql):
@@ -62,6 +69,10 @@ def get_inserts_and_values(sql):
         localized = text.split(INSERT_END_STR)[0]
         table_name = localized.split(":")[0]
         field_sequence = get_field_by_table_name(table_name)
+        # if table_name == "accident_budget":
+        #     breakpoint()
+        if not exists_in_new_db(table_name):
+            continue
         try:
             start = "*/;\nREPLACE INTO \"" + table_name + "\" "+ field_sequence.replace("`", "\"")
             localized = replace_string_between(localized, start, " VALUES", "") # tirando '(' e ')' dos fields antigos
@@ -109,7 +120,7 @@ def translate_table_name(table_name):
 
 def get_field_position_by_table_name(table_name: str, field: str):
     try:
-        table_structure: list[str] = STRUCTURE[table_name]
+        table_structure: list[str] = OLD_STRUCTURE[table_name]
         return table_structure.index(field) + 1
     except KeyError:
         return None
@@ -205,7 +216,7 @@ def convert_sql(sql):
         positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
         
-        values = take_away_field(values, positions_to_remove)[0:-1]
+        values = take_away_field(values, positions_to_remove)[0:]
         result = convert_values_in_insert(insert, values)
 
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence + " ")
