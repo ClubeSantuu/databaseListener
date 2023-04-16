@@ -232,7 +232,7 @@ def convert_sql(sql):
         values = take_away_field(values, positions_to_remove)[0:-1]
         result = convert_values_in_insert(insert, values)
 
-        result = replace_string_between(result, "INTO `" + table_name + "` ", "VALUES", field_sequence + " ")
+        result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence + " ").replace("\"", "`")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
