@@ -243,6 +243,12 @@ fd.close()
 
 converted = convert_sql(SQL)
 converted = remove_comments(converted)
+converted = f"""
+SET FOREIGN_KEY_CHECKS=0;
+SET time_zone = '+0:00'
+
+{converted}
+"""
 
 with open("db_data/converted.sql", "w") as file:
     file.write(converted)
