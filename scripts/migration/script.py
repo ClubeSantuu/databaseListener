@@ -251,7 +251,6 @@ fd.close()
 
 converted = convert_sql(SQL)
 converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
-converted = converted.replace("``order``", "`order`") # gambiarra para arrumar erro desconhecido
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00';

@@ -735,7 +735,7 @@
         "deductible_text_disabled",
         "is_fixed",
         "program_id",
-        "\"order\"",
+        "order",
         "resume_text",
         "code",
         "deductible",
@@ -745,7 +745,7 @@
         "id",
         "coverage_id",
         "program_id",
-        "\"order\""
+        "order"
     ],
     "insurance_document_config": [
         "id",
