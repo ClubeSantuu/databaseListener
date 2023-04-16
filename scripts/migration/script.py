@@ -12,10 +12,14 @@ fd = open('db_data/field_name_translation.json', 'r')
 STRUCTURE_TRANSLATION = json.load(fd)
 fd.close()
 
+fd = open('db_data/field_name_translation.json', 'r')
+STRUCTURE_TRANSLATION = json.load(fd)
+fd.close()
+
 INSERT_START_STR = "-- Copiando dados para a tabela public."
 INSERT_END_STR = "ENABLE KEYS */;"
 VALUES_START_STR = " VALUES\n\t"
-VALUES_END_STR = "\n/*!"
+VALUES_END_STR = ";\n/*!"
 
 def get_string_between(text, val_start, val_end):
     try:
@@ -24,27 +28,49 @@ def get_string_between(text, val_start, val_end):
         return None
 
 def replace_string_between(text, val_start, val_end, final):
-    start = text.split(val_start)[0]
-    end = text.split(val_end)[1]
+    try:
+        start = text.split(val_start, 1)[0]
+        end = text.split(val_end, 1)[1]
+    except IndexError:
+        return ""
     return f"{start}{val_start}{final}{val_end}{end}"
 
 def get_table_name_from_insert(insert):
     return get_string_between(insert, INSERT_START_STR, ":")
 
+def get_field_by_table_name(table_name):
+    try:
+        table_structure = STRUCTURE[table_name]
+    except KeyError:
+        return None
+
+    return f"(`{'`, `'.join(table_structure)}`)"
+
+def remove_repeated_replace_into(insert, table_name, field_sequence):
+    string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t".replace("`", "\"")
+    insert = insert.replace(string_to_remove, "----waiting----", 1) # só a  primeira ocorrência permanece
+    insert = insert.replace(string_to_remove, "")
+    insert = insert.replace("----waiting----", string_to_remove)
+    return insert
+
 def get_inserts_and_values(sql):
 
     result = []
     strs = sql.split(INSERT_START_STR)[1:] # [0] > antes do primeiro insert
-
+    
     for text in strs:
         localized = text.split(INSERT_END_STR)[0]
         table_name = localized.split(":")[0]
+        field_sequence = get_field_by_table_name(table_name)
         try:
-            localized = replace_string_between(localized, "INTO \"" + table_name + "\" ", "VALUES", "") # tirando '(' e ')' dos fields antigos
+            start = "*/;\nREPLACE INTO \"" + table_name + "\" "+ field_sequence.replace("`", "\"")
+            localized = replace_string_between(localized, start, " VALUES", "") # tirando '(' e ')' dos fields antigos
         except IndexError:
             continue
         clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
-        
+        clean = remove_repeated_replace_into(clean, table_name, field_sequence)
+        # if table_name == "account_custom_user":
+        #     breakpoint()
         result.append(
             (
                 clean,
@@ -56,14 +82,6 @@ def get_inserts_and_values(sql):
 
 def convert_values_in_insert(insert_sql, final_values):
     return replace_string_between(insert_sql, VALUES_START_STR,VALUES_END_STR, final_values)
-
-def get_field_by_table_name(table_name):
-    try:
-        table_structure = STRUCTURE[table_name]
-    except KeyError:
-        return None
-
-    return f"(`{'`,`'.join(table_structure)}`)"
 
 def replace_name_by_position(fields_to_remove):
     for table_name, table_values in fields_to_remove.items():
@@ -90,8 +108,8 @@ def get_field_position_by_table_name(table_name: str, field: str):
         return None
 
 def take_away_field_from_field_list(fields = "(`id`,`name`,`count`)", position = []):
-    fields = fields.split("`,`")
-    fields[0] = fields[0][2:4]
+    fields = fields.split("`, `")
+    fields[0] = fields[0][2:]
     fields[len(fields)-1] = fields[0][0:-2]
     fields.pop() # pop porque o ultimo é vazio
 
@@ -166,18 +184,22 @@ def convert_sql(sql):
     inserts_and_values = get_inserts_and_values(sql)
     final_inserts = []
     for insert, values in inserts_and_values:
+        table_name = get_table_name_from_insert(insert)
         if values is None:
             continue
-        table_name = get_table_name_from_insert(insert)
         if table_name is None:
             continue
-        positions_to_remove = get_field_position_to_remove(table_name)
-        values = take_away_field(values, positions_to_remove)
-        result = convert_values_in_insert(insert, values)
+        
         field_sequence = get_field_by_table_name(table_name)
         if field_sequence is None:
             continue
+        
+        positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(field_sequence, positions_to_remove)
+        
+        values = take_away_field(values, positions_to_remove)[0:-1]
+        result = convert_values_in_insert(insert, values)
+
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
