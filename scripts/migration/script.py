@@ -8,12 +8,12 @@ fd = open('db_data/old_db_structure.json', 'r')
 STRUCTURE = json.load(fd)
 fd.close()
 
-fd = open('db_data/field_name_translation.json', 'r')
-STRUCTURE_TRANSLATION = json.load(fd)
+fd = open('db_data/table_name_translation.json', 'r')
+TABLE_TRANSLATION = json.load(fd)
 fd.close()
 
 fd = open('db_data/field_name_translation.json', 'r')
-STRUCTURE_TRANSLATION = json.load(fd)
+FIELD_TRANSLATION = json.load(fd)
 fd.close()
 
 INSERT_START_STR = "-- Copiando dados para a tabela public."
@@ -50,7 +50,7 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
     string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t".replace("`", "\"")
     insert = insert.replace(string_to_remove, "----waiting----", 1) # só a  primeira ocorrência permanece
     insert = insert.replace(string_to_remove, "")
-    insert = insert.replace("----waiting----", string_to_remove)
+    insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)))
     return insert
 
 def get_inserts_and_values(sql):
@@ -95,8 +95,17 @@ def get_field_position_to_remove(table_name):
     except KeyError:
         return None
 
-def replace_field_name(table_name, field_name):
-    return STRUCTURE_TRANSLATION[table_name][field_name]
+def translate_field_name(table_name, field_name):
+    try:
+        return FIELD_TRANSLATION[table_name][field_name]
+    except:
+        return field_name
+
+def translate_table_name(table_name):
+    try:
+        return TABLE_TRANSLATION[table_name]
+    except:
+        return table_name
 
 def get_field_position_by_table_name(table_name: str, field: str):
     try:
@@ -107,17 +116,16 @@ def get_field_position_by_table_name(table_name: str, field: str):
     except ValueError:
         return None
 
-def take_away_field_from_field_list(fields = "(`id`,`name`,`count`)", position = []):
+def take_away_field_from_field_list(table_name, fields = "(`id`,`name`,`count`)", position = []):
     fields = fields.split("`, `")
     fields[0] = fields[0][2:]
-    fields[len(fields)-1] = fields[0][0:-2]
-    fields.pop() # pop porque o ultimo é vazio
+    fields[len(fields)-1] = fields[len(fields)-1][0:-2]
 
     result = []
 
     for i, field in enumerate(fields):
         if position is None or not (i+1) in position:
-            result.append(field)
+            result.append(translate_field_name(table_name, field))
         
     result = f"(`{'`,`'.join(result)}`)"
     return result
@@ -195,7 +203,7 @@ def convert_sql(sql):
             continue
         
         positions_to_remove = get_field_position_to_remove(table_name)
-        field_sequence = take_away_field_from_field_list(field_sequence, positions_to_remove)
+        field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
         
         values = take_away_field(values, positions_to_remove)[0:-1]
         result = convert_values_in_insert(insert, values)
