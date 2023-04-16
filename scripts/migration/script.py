@@ -199,7 +199,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                 elif clean == "true":
                     clean = 1
                 elif clean[-3:] == "+00":
-                    clean = "SELECT CONVERT_TZ("+ clean[0:-3] + ", '+00:00', -03:00)"
+                    clean = "SELECT CONVERT_TZ('"+ clean[0:-3] + "', '+00:00', -03:00)"
                     complete_with = ""
                 clean_value.append(f"{complete_with}{clean}{complete_with}")     
    
