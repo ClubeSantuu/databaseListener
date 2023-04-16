@@ -204,7 +204,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = "NULL"
                     complete_with = ""
                     
-                clean_value.append(f"{complete_with}{clean}{complete_with}")     
+                clean_value.append(f"{complete_with}{clean.replace("'", "[[[[ASPAS]]]]")}{complete_with}")     
    
             there_is_next = value != "---end---"
             
@@ -246,7 +246,7 @@ REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
 converted = convert_sql(SQL)
-converted = remove_comments(converted)
+converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00'
