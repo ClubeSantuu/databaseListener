@@ -7,5 +7,11 @@
     },
     "financial_acquirer_tax": {
         "program_v2_id": "program_id"
+    },
+    "insurance_proposal_associate_bike": {
+        "bike_is_orign": "bike_is_origin",
+        "is_eletrical": "is_electric",
+        "situation": "is_new (cuidado pra não ser invertido o valor)",
+        "stem_composal": "frame_material"
     }
 }

@@ -26,5 +26,23 @@
         "program_id",
         "endpoint"
     ],
+    "insurance_coverage": [
+        "deductible_text_with_compulsory"
+    ],
+    "insurance_document_config": [
+        "stipulation_address",
+        "stipulation_cnpj",
+        "stipulation_company_name"
+    ],
+    "insurance_insurer": [
+        "program_v2_id"
+    ],
+    "insurance_program": [
+        "discount_renew",
+	    "fixed_payment"
+    ],
+    "insurance_proposal": [
+        "insurance_order_id"
+    ],
     "voucher_voucher_shop_voucher": ["id"]
 }
