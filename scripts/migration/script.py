@@ -1,4 +1,5 @@
 import json
+import re
 
 fd = open('db_data/olddb.sql', 'r')
 SQL = fd.read()
@@ -60,9 +61,15 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
     insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
     return insert
 
+def remove_comments(sql):
+    sql = re.sub(r'--.*\s', "", sql)
+    sql = re.sub(r'/\*.*\*/;', "", sql)
+    return sql
+
 def get_inserts_and_values(sql):
 
     result = []
+    sql = remove_comments(sql)
     strs = sql.split(INSERT_START_STR)[1:] # [0] > antes do primeiro insert
     
     for text in strs:
@@ -216,7 +223,7 @@ def convert_sql(sql):
         positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
         
-        values = take_away_field(values, positions_to_remove)[0:]
+        values = take_away_field(values, positions_to_remove)[0:-1]
         result = convert_values_in_insert(insert, values)
 
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence + " ")
