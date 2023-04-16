@@ -198,6 +198,9 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = 0
                 elif clean == "true":
                     clean = 1
+                elif clean[-3:] == "+00":
+                    clean = "SELECT CONVERT_TZ("+ clean[0:-3] + ", '+00:00', -03:00)"
+                    complete_with = ""
                 clean_value.append(f"{complete_with}{clean}{complete_with}")     
    
             there_is_next = value != "---end---"
@@ -229,7 +232,7 @@ def convert_sql(sql):
         values = take_away_field(values, positions_to_remove)[0:-1]
         result = convert_values_in_insert(insert, values)
 
-        result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence + " ")
+        result = replace_string_between(result, "INTO `" + table_name + "` ", "VALUES", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
