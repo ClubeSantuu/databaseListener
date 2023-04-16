@@ -42,7 +42,8 @@
         "fixed_payment"
     ],
     "insurance_proposal": [
-        "insurance_order_id"
+        "insurance_order_id",
+        "email_expires_fifteen_days"
     ],
     "voucher_voucher_shop_voucher": [
         "id"
