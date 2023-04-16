@@ -200,9 +200,9 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = 1
                 elif clean[-3:] == "+00":
                     clean = clean[0:-3]
-                # elif clean == "--":
-                #     clean = "NULL"
-                #     complete_with = ""
+                elif clean == "--":
+                    clean = "NULL"
+                    complete_with = ""
                     
                 clean_value.append(f"{complete_with}{clean}{complete_with}")     
    
@@ -244,7 +244,7 @@ REMOVED_FIELDS = json.load(fd)
 REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
-converted = convert_sql(SQL).replace("'--'", "NULL")
+converted = convert_sql(SQL)
 converted = remove_comments(converted)
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
