@@ -56,9 +56,9 @@ def get_field_by_table_name(table_name):
 
 def remove_repeated_replace_into(insert, table_name, field_sequence):
     string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t"
-    insert = insert.replace(string_to_remove, "----waiting----", 1) # só a  primeira ocorrência permanece
+    string_to_replace = f"\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t"
     insert = insert.replace(string_to_remove, ",\n")
-    insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
+    insert = insert.replace(string_to_replace, string_to_replace.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
     return insert
 
 def remove_comments(sql):
@@ -251,6 +251,7 @@ fd.close()
 
 converted = convert_sql(SQL)
 converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
+converted = converted.replace("``order``", "`order`") # gambiarra para arrumar erro desconhecido
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00';
