@@ -200,6 +200,9 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = 1
                 elif clean[-3:] == "+00":
                     clean = clean[0:-3]
+                elif clean == "--":
+                    clean = "NULL"
+                    complete_with = ""
                     
                 clean_value.append(f"{complete_with}{clean}{complete_with}")     
    
