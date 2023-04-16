@@ -1,4 +1,4 @@
-{    
+{
     "core_model": {
         "description_1": "description"
     },
@@ -11,7 +11,10 @@
     "insurance_proposal_associate_bike": {
         "bike_is_orign": "bike_is_origin",
         "is_eletrical": "is_electric",
-        "situation": "is_new (cuidado pra não ser invertido o valor)",
+        "situation": "is_new",
         "stem_composal": "frame_material"
+    },
+    "task_task_log": {
+        "service_order_id": "order_id"
     }
 }
