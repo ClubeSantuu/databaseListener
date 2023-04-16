@@ -69,7 +69,6 @@ def remove_comments(sql):
 def get_inserts_and_values(sql):
 
     result = []
-    sql = remove_comments(sql)
     strs = sql.split(INSERT_START_STR)[1:] # [0] > antes do primeiro insert
     
     for text in strs:
@@ -236,6 +235,8 @@ REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
 converted = convert_sql(SQL)
+converted = remove_comments(converted)
+
 with open("db_data/converted.sql", "w") as file:
     file.write(converted)
 
