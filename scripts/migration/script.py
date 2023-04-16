@@ -204,7 +204,11 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = "NULL"
                     complete_with = ""
                     
-                clean_value.append(f"""{complete_with}{str(clean).replace("'", "\\'")}{complete_with}""")     
+                clean_value.append("{}{}{}".format(
+                    complete_with,
+                    str(clean).replace("'", "\\'"),
+                    complete_with,
+                ))     
    
             there_is_next = value != "---end---"
             
