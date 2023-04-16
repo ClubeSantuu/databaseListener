@@ -194,6 +194,10 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
 
             if position is None or not field_position in position:
+                if clean == "false":
+                    clean = 0
+                elif clean == "true":
+                    clean = 1
                 clean_value.append(f"{complete_with}{clean}{complete_with}")     
    
             there_is_next = value != "---end---"
