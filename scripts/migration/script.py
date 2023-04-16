@@ -248,7 +248,7 @@ fd = open('db_data/removed_fields.json', 'r')
 REMOVED_FIELDS = json.load(fd)
 REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
-breakpoint()
+
 converted = convert_sql(SQL)
 converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
 converted = f"""
