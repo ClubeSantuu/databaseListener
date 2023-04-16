@@ -1,3 +1,30 @@
 {
+    "account_custom_user": [
+        "is_manager",
+        "is_seller",
+        "is_customer",
+        "created_at",
+        "updated_at",
+        "shop_id",
+        "is_broker",
+        "is_analyst",
+        "is_workshop",
+        "is_appraiser",
+        "insurer_id"
+    ],
+    "core_model": [
+        "description_2",
+        "description_3"
+    ],
+    "core_shop_product": [
+        "program"
+    ],
+    "financial_acquirer_tax": [
+        "program"
+    ],
+    "financial_assurant_config": [
+        "program_id",
+        "endpoint"
+    ],
     "voucher_voucher_shop_voucher": ["id"]
 }

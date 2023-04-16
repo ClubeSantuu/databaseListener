@@ -1,0 +1,13 @@
+{
+    "bike_event_answer":  "bike_events_answer",
+    "bike_event_bikeevent":  "bike_events_bikeevent",
+    "bike_event_bikeeventuser":  "bike_events_bikeeventuser",
+    "bike_event_customaction":  "bike_events_customaction",
+    "bike_event_question":  "bike_events_question",
+    "bike_event_quiz":  "bike_events_quiz",
+    "bike_event_quizanswer":  "bike_events_quizanswer",
+    "bike_event_raffleevent":  "bike_events_raffleevent",
+    "bike_event_rafflewinner":  "bike_events_rafflewinner",
+    "bike_event_subscriptionpresenceconfirmation":  "bike_events_subscriptionpresenceconfirmation",
+    "bike_event_userinevent":  "bike_events_userinevent"
+}

@@ -1,6 +1,6 @@
 import json
 
-fd = open('db_data/apidb.sql', 'r')
+fd = open('db_data/test.sql', 'r')
 SQL = fd.read()
 fd.close()
 
@@ -11,6 +11,11 @@ fd.close()
 fd = open('db_data/field_name_translation.json', 'r')
 STRUCTURE_TRANSLATION = json.load(fd)
 fd.close()
+
+INSERT_START_STR = "-- Copiando dados para a tabela public."
+INSERT_END_STR = "ENABLE KEYS */;"
+VALUES_START_STR = ") VALUES\n\t"
+VALUES_END_STR = ";\n/*!"
 
 def get_string_between(text, val_start, val_end):
     try:
@@ -26,23 +31,23 @@ def replace_string_between(text, val_start, val_end, final):
 def get_inserts_and_values(sql):
 
     result = []
-    strs = sql.split("LOCK TABLES `")[1:]
+    strs = sql.split(INSERT_START_STR)[1:] # [0] > antes do primeiro insert
 
     for text in strs:
-        localized = text.split("UNLOCK TABLES;")[0]
-        clean = f"LOCK TABLES `{localized}UNLOCK TABLES;"
+        localized = text.split(INSERT_END_STR)[0]
+        clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
         
         result.append(
             (
                 clean,
-                get_string_between(clean,"` VALUES ","\n")
+                get_string_between(clean,VALUES_START_STR,VALUES_END_STR)
             )
         )
     
     return result
 
 def convert_values_in_insert(insert_sql, final_values):
-    return replace_string_between(insert_sql, "` VALUES ","\n", final_values)
+    return replace_string_between(insert_sql, VALUES_START_STR,VALUES_END_STR, final_values)
 
 def get_field_by_table_name(table_name):
     try:
@@ -78,8 +83,8 @@ def get_field_position_by_table_name(table_name: str, field: str):
 
 def take_away_field(values = "(null,null),(null,null)", position = []):
     values = values[0:-1] # tirando ;
-    values = values + ",("
-    values = values.replace("),(", ",---end---divider(")
+    values = values + ",\n\t("
+    values = values.replace("),\n\t(", ",---end---divider(")
     values = values.split("divider")
     values.pop() # pop porque o ultimo é vazio
     # termina com ',---end---' e começa com '('
@@ -103,7 +108,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                 separator = "',"
                 complete_with = "'"
             else:
-                actual_type = "number"
+                actual_type = "not a string"
                 separator = ","
                 complete_with = ""
 
@@ -122,7 +127,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
     return result_values
 
 def get_table_name_from_insert(insert):
-    return get_string_between(insert, "LOCK TABLES `", "`")
+    return get_string_between(insert, INSERT_START_STR, ":")
 
 def convert_sql(sql):
     inserts_and_values = get_inserts_and_values(sql)
@@ -140,7 +145,7 @@ def convert_sql(sql):
         if field_sequence is None:
             continue
         field_sequence = take_away_field(field_sequence + ";", positions_to_remove)
-        result = replace_string_between(result, "` VALUES ", "VALUES (", field_sequence + " ")
+        result = replace_string_between(result, VALUES_START_STR, "\n\t(", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
