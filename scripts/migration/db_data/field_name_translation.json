@@ -12,8 +12,8 @@
         "insterest_value": "interest_value"
     },
     "insurance_proposal": {
-        "decathlon_cancellation_xml_file": "decathlon_cancellation_xml_file",
-        "decathlon_cancellation_xml_file_v2": "decathlon_cancellation_xml_file_v2"
+        "decathlon_cancelation_xml_file": "decathlon_cancellation_xml_file",
+        "decathlon_cancelation_xml_file_v2": "decathlon_cancellation_xml_file_v2"
     },
     "insurance_proposal_associate_bike": {
         "bike_is_orign": "bike_is_origin",
