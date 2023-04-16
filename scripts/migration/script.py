@@ -14,8 +14,8 @@ fd.close()
 
 INSERT_START_STR = "-- Copiando dados para a tabela public."
 INSERT_END_STR = "ENABLE KEYS */;"
-VALUES_START_STR = ") VALUES\n\t"
-VALUES_END_STR = ";\n/*!"
+VALUES_START_STR = " VALUES\n\t"
+VALUES_END_STR = "\n/*!"
 
 def get_string_between(text, val_start, val_end):
     try:
@@ -28,6 +28,9 @@ def replace_string_between(text, val_start, val_end, final):
     end = text.split(val_end)[1]
     return f"{start}{val_start}{final}{val_end}{end}"
 
+def get_table_name_from_insert(insert):
+    return get_string_between(insert, INSERT_START_STR, ":")
+
 def get_inserts_and_values(sql):
 
     result = []
@@ -35,6 +38,8 @@ def get_inserts_and_values(sql):
 
     for text in strs:
         localized = text.split(INSERT_END_STR)[0]
+        table_name = localized.split(":")[0]
+        localized = replace_string_between(localized, "INTO \"" + table_name + "\" ", "VALUES", "") # tirando '(' e ')' dos fields antigos
         clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
         
         result.append(
@@ -55,7 +60,7 @@ def get_field_by_table_name(table_name):
     except KeyError:
         return None
 
-    return f"({','.join(table_structure)})"
+    return f"(`{'`,`'.join(table_structure)}`)"
 
 def replace_name_by_position(fields_to_remove):
     for table_name, table_values in fields_to_remove.items():
@@ -81,6 +86,22 @@ def get_field_position_by_table_name(table_name: str, field: str):
     except ValueError:
         return None
 
+def take_away_field_from_field_list(fields = "(`id`,`name`,`count`)", position = []):
+    fields = fields.split("`,`")
+    fields[0] = fields[0][2:4]
+    fields[len(fields)-1] = fields[0][0:-2]
+    fields.pop() # pop porque o ultimo é vazio
+
+    result = []
+
+    for i, field in enumerate(fields):
+        if position is None or not (i+1) in position:
+            result.append(field)
+        
+    result = f"(`{'`,`'.join(result)}`)"
+    return result
+
+
 def take_away_field(values = "(null,null),(null,null)", position = []):
     values = values[0:-1] # tirando ;
     values = values + ",\n\t("
@@ -102,15 +123,27 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
 
         while there_is_next:
             field_position += 1
-            if value[0]=="'":
-                value = value[1:]
-                actual_type = "string"
-                separator = "',"
-                complete_with = "'"
+            if field_position == 1:
+                if value[0]=="'": # primeiro campo não tem espaço
+                    value = value[1:]
+                    actual_type = "string"
+                    separator = "',"
+                    complete_with = "'"
+                else:                           
+                    actual_type = "not a string"
+                    separator = ","
+                    complete_with = ""
             else:
-                actual_type = "not a string"
-                separator = ","
-                complete_with = ""
+                if value[0:2]==" '":
+                    value = value[2:]
+                    actual_type = "string"
+                    separator = "',"
+                    complete_with = "'"
+                else:
+                    value = value[1:]
+                    actual_type = "not a string"
+                    separator = ","
+                    complete_with = ""
 
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
 
@@ -122,12 +155,9 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
         clean_value = f"({','.join(clean_value)})"
         result_values.append(clean_value)
 
-    result_values = ",".join(result_values) + ";"
+    result_values = ",\n\t".join(result_values) + ";"
     
     return result_values
-
-def get_table_name_from_insert(insert):
-    return get_string_between(insert, INSERT_START_STR, ":")
 
 def convert_sql(sql):
     inserts_and_values = get_inserts_and_values(sql)
@@ -144,8 +174,8 @@ def convert_sql(sql):
         field_sequence = get_field_by_table_name(table_name)
         if field_sequence is None:
             continue
-        field_sequence = take_away_field(field_sequence + ";", positions_to_remove)
-        result = replace_string_between(result, VALUES_START_STR, "\n\t(", field_sequence + " ")
+        field_sequence = take_away_field_from_field_list(field_sequence, positions_to_remove)
+        result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence + " ")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
@@ -157,3 +187,6 @@ fd.close()
 converted = convert_sql(SQL)
 with open("db_data/converted.sql", "w") as file:
     file.write(converted)
+
+# arrumar questão das aspas duplas
+# field_list repetido
