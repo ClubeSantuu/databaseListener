@@ -54,10 +54,10 @@ def get_field_by_table_name(table_name):
     return f"(`{'`, `'.join(table_structure)}`)"
 
 def remove_repeated_replace_into(insert, table_name, field_sequence):
-    string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t".replace("`", "\"")
+    string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t"
     insert = insert.replace(string_to_remove, "----waiting----", 1) # só a  primeira ocorrência permanece
     insert = insert.replace(string_to_remove, "")
-    insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
+    insert = insert.replace("----waiting----", string_to_remove.replace(table_name, translate_table_name(table_name)))
     return insert
 
 def get_inserts_and_values(sql):
