@@ -200,7 +200,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = 1
                 elif clean[-3:] == "+00":
                     clean = clean[0:-3]
-                elif clean == "--":
+                elif clean.count("-") == len(clean):
                     clean = "NULL"
                     complete_with = ""
                     
