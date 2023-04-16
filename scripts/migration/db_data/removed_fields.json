@@ -43,7 +43,8 @@
     ],
     "insurance_proposal": [
         "insurance_order_id",
-        "email_expires_fifteen_days"
+        "email_expires_fifteen_days",
+        "has_tax_invoice"
     ],
     "voucher_voucher_shop_voucher": [
         "id"
