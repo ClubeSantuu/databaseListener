@@ -204,7 +204,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     clean = "NULL"
                     complete_with = ""
                     
-                clean_value.append(f"{complete_with}{clean.replace("'", "[[[[ASPAS]]]]")}{complete_with}")     
+                clean_value.append(f"""{complete_with}{str(clean).replace("'", "\\'")}{complete_with}""")     
    
             there_is_next = value != "---end---"
             
@@ -244,12 +244,12 @@ fd = open('db_data/removed_fields.json', 'r')
 REMOVED_FIELDS = json.load(fd)
 REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
-
+breakpoint()
 converted = convert_sql(SQL)
 converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
-SET time_zone = '+0:00'
+SET time_zone = '+0:00';
 
 {converted}
 """
