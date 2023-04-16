@@ -1,6 +1,6 @@
 import json
 
-fd = open('db_data/test.sql', 'r')
+fd = open('db_data/olddb.sql', 'r')
 SQL = fd.read()
 fd.close()
 
@@ -39,7 +39,10 @@ def get_inserts_and_values(sql):
     for text in strs:
         localized = text.split(INSERT_END_STR)[0]
         table_name = localized.split(":")[0]
-        localized = replace_string_between(localized, "INTO \"" + table_name + "\" ", "VALUES", "") # tirando '(' e ')' dos fields antigos
+        try:
+            localized = replace_string_between(localized, "INTO \"" + table_name + "\" ", "VALUES", "") # tirando '(' e ')' dos fields antigos
+        except IndexError:
+            continue
         clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
         
         result.append(
