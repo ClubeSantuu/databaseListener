@@ -11,6 +11,9 @@
     "insurance_nonotepaymentoption": {
         "insterest_value": "interest_value"
     },
+    "insurer_program": {
+        "program_v2_id": "program_id"
+    },
     "insurance_proposal": {
         "decathlon_cancelation_xml_file": "decathlon_cancellation_xml_file",
         "decathlon_cancelation_xml_file_v2": "decathlon_cancellation_xml_file_v2"
@@ -19,7 +22,16 @@
         "bike_is_orign": "bike_is_origin",
         "is_eletrical": "is_electric",
         "situation": "is_new",
-        "stem_composal": "frame_material"
+        "stem_composal": "frame_material",
+        "brand": "brand_name",
+        "category": "category_name",
+        "model": "model_name"
+    },
+    "program_images_upload": {
+        "image_type": "identifier"
+    },
+    "task_taskconfigimgparam": {
+        "task_config_img_id": "task_config_id"
     },
     "task_task_log": {
         "service_order_id": "order_id"

@@ -235,7 +235,6 @@ def convert_sql(sql):
         
         positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
-        
         values = take_away_field(values, positions_to_remove)[0:-1]
         result = convert_values_in_insert(insert, values)
 

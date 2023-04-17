@@ -457,35 +457,6 @@
         "program_id",
         "shop_id"
     ],
-    "django_admin_log": [
-        "id",
-        "action_time",
-        "object_id",
-        "object_repr",
-        "action_flag",
-        "change_message",
-        "content_type_id",
-        "user_id"
-    ],
-    "django_content_type": [
-        "id",
-        "app_label",
-        "model"
-    ],
-    "django_migrations": [
-        "id",
-        "app",
-        "name",
-        "applied"
-    ],
-    "django_session": [
-        "session_key",
-        "session_data",
-        "expire_date"
-    ],
-    "insurance_claim_bikeparthascoverage": [
-        "id"
-    ],
     "financial_acquirer_tax": [
         "id",
         "acquirer",
@@ -933,7 +904,10 @@
         "insurance_proposal_id",
         "has_tax_invoice",
         "is_new",
-        "model_id"
+        "model_id",
+        "model_name",
+        "brand_name",
+        "category_name"
     ],
     "insurance_proposal_bid": [
         "id",
