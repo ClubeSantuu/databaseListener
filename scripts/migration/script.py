@@ -64,7 +64,7 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
 
     insert = insert.replace(string_to_replace, "[[[TO_REPLACE]]]")
     insert = insert.replace(string_to_remove, ",\n\t")
-    insert = insert.replace(string_to_replace, string_to_replace.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
+    insert = insert.replace(string_to_replace, string_to_replace.replace(table_name, table_name).replace("\"", "`"))
     insert = insert.replace("[[[TO_REPLACE]]]", string_to_replace)
     return insert
 
@@ -247,7 +247,7 @@ def convert_sql(sql):
         result = convert_values_in_insert(insert, values)
 
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence.replace("\"", "`") + " ")
-        result = result.replace("INTO \"" + table_name + "\"", "INTO `" + table_name + "`")
+        result = result.replace("INTO \"" + table_name + "\"", "INTO `" + translate_table_name(table_name) + "`")
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
