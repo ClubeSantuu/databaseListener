@@ -171,29 +171,29 @@ def take_away_field(table_name, values = "(null,null),\n\t(null,null);", positio
         field_position = 0
 
         there_is_next = True
-
+        if "RR500Branca,24'''" in value:
+            breakpoint()
         while there_is_next:
             field_position += 1
             if field_position == 1:
                 if value[0]=="'": # primeiro campo não tem espaço
                     value = value[1:]
                     actual_type = "string"
-                    separator = "',"
+                    separator = "', "
                     complete_with = "'"
                 else:
                     actual_type = "not a string"
-                    separator = ","
+                    separator = ", "
                     complete_with = ""
             else:
-                if value[0:2]==" '":
-                    value = value[2:]
+                if value[0]=="'":
+                    value = value[1:]
                     actual_type = "string"
-                    separator = "',"
+                    separator = "', "
                     complete_with = "'"
                 else:
-                    value = value[1:]
                     actual_type = "not a string"
-                    separator = ","
+                    separator = ", "
                     complete_with = ""
 
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
@@ -263,6 +263,9 @@ converted = converted.replace("[[[[PROHIBITED_DIGIT_2]]]]","---")
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00';
+/*set global max_allowed_packet=128*1024*1024;*/
+ALTER DATABASE database_name CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE table_name CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 {converted}
 """
