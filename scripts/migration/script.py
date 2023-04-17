@@ -198,6 +198,8 @@ def take_away_field(table_name, values = "(null,null),(null,null);", position = 
 
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
 
+            clean = clean.replace("--", "[[[[PROHIBITED_DIGIT_1]]]]").replace("---", "[[[[PROHIBITED_DIGIT_2]]]]") # lida com -- e ----
+
             if position is None or not field_position in position:
                 if clean == "false":
                     clean = 0
@@ -257,6 +259,8 @@ fd.close()
 
 converted = convert_sql(SQL)
 converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
+converted = converted.replace("[[[[PROHIBITED_DIGIT_1]]]]","--")
+converted = converted.replace("[[[[PROHIBITED_DIGIT_2]]]]","---")
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00';
