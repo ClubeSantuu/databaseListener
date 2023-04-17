@@ -430,6 +430,17 @@
         "created_at",
         "updated_at"
     ],
+    "core_model": [
+        "id",
+        "code",
+        "description",
+        "year",
+        "price",
+        "enabled",
+        "brand_id",
+        "category_id",
+        "created_by_user"
+    ],
     "core_shop": [
         "id",
         "company_name",
