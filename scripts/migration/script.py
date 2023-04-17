@@ -83,7 +83,7 @@ def get_inserts_and_values(sql):
         table_name = localized.split(":")[0]
         field_sequence = get_field_by_table_name(table_name)
 
-        if not exists_in_new_db(table_name):
+        if not exists_in_new_db(translate_table_name(table_name)):
             continue
         try:
             start = "*/;\nREPLACE INTO \"" + table_name + "\" "+ field_sequence.replace("`", "\"")
@@ -156,7 +156,7 @@ def take_away_field_from_field_list(table_name, fields = "(`id`,`name`,`count`)"
 def take_away_field(table_name, values = "(null,null),\n\t(null,null);", position = []):
     values = values[0:-1] # tirando ;
     values = values + ",\n\t(" # :? para o último ser descartado [..., ?]
-    values = values.replace("),\n\t(", ",---end---divider(")
+    values = values.replace("),\n\t(", ", ---end---divider(")
     values = values.split("divider")
     values.pop() # pop porque o ultimo é vazio
     # termina com ',---end---' e começa com '('
@@ -171,8 +171,7 @@ def take_away_field(table_name, values = "(null,null),\n\t(null,null);", positio
         field_position = 0
 
         there_is_next = True
-        if "RR500Branca,24'''" in value:
-            breakpoint()
+
         while there_is_next:
             field_position += 1
             if field_position == 1:
@@ -264,8 +263,8 @@ converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00';
 /*set global max_allowed_packet=128*1024*1024;*/
-ALTER DATABASE database_name CHARACTER SET utf8 COLLATE utf8_general_ci;
-ALTER TABLE table_name CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER DATABASE ecosystemdb CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE core_model CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 {converted}
 """

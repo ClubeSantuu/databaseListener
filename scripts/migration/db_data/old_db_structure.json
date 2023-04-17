@@ -203,9 +203,9 @@
         "created_at",
         "updated_at",
         "type",
-        "\"order\"",
+        "order",
         "quiz_id",
-        "\"group\"",
+        "group",
         "mask",
         "placeholder"
     ],
@@ -235,7 +235,7 @@
     ],
     "bike_event_rafflewinner": [
         "id",
-        "\"order\"",
+        "order",
         "created_at",
         "updated_at",
         "raffle_id",
@@ -864,7 +864,7 @@
         "lmi",
         "plan_id",
         "use_auxiliary_text",
-        "\"order\""
+        "order"
     ],
     "insurance_life_plan": [
         "id",
@@ -873,7 +873,7 @@
         "amount",
         "created_at",
         "updated_at",
-        "\"order\"",
+        "order",
         "enable"
     ],
     "insurance_life_plan_product_codes": [
@@ -1397,7 +1397,7 @@
     "service_order_message": [
         "id",
         "message",
-        "\"time\"",
+        "time",
         "seen",
         "chat_id",
         "sender_id"
