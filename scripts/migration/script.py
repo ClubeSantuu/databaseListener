@@ -257,7 +257,7 @@ REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
 converted = convert_sql(SQL)
-converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\'')
+converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\\\'')
 converted = converted.replace("[[[[PROHIBITED_DIGIT_1]]]]","--")
 converted = converted.replace("[[[[PROHIBITED_DIGIT_2]]]]","---")
 converted = f"""

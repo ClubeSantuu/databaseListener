@@ -955,14 +955,6 @@
         "child_proposal_id",
         "origin_proposal_id"
     ],
-    "insurance_proposalhistory": [
-        "id",
-        "from_status",
-        "to_status",
-        "updated_at",
-        "proposal_history_id",
-        "updated_by_id"
-    ],
     "insurance_range": [
         "id",
         "initial_range",
