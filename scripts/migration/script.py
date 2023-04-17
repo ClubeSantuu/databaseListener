@@ -55,10 +55,17 @@ def get_field_by_table_name(table_name):
     return f"(`{'`, `'.join(table_structure)}`)"
 
 def remove_repeated_replace_into(insert, table_name, field_sequence):
-    string_to_remove = f";\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t"
-    string_to_replace = f"\nREPLACE INTO \"{table_name}\" {field_sequence} VALUES\n\t"
-    insert = insert.replace(string_to_remove, ",\n")
+
+    string_to_remove = ";\nREPLACE INTO \"{}\" {} VALUES\n\t".format(
+        table_name,
+        field_sequence.replace("`","\"")
+    )
+    string_to_replace = "*/" + string_to_remove
+
+    insert = insert.replace(string_to_replace, "[[[TO_REPLACE]]]")
+    insert = insert.replace(string_to_remove, ",\n\t")
     insert = insert.replace(string_to_replace, string_to_replace.replace(table_name, translate_table_name(table_name)).replace("\"", "`"))
+    insert = insert.replace("[[[TO_REPLACE]]]", string_to_replace)
     return insert
 
 def remove_comments(sql):
@@ -70,13 +77,12 @@ def get_inserts_and_values(sql):
 
     result = []
     strs = sql.split(INSERT_START_STR)[1:] # [0] > antes do primeiro insert
-    
+
     for text in strs:
         localized = text.split(INSERT_END_STR)[0]
         table_name = localized.split(":")[0]
         field_sequence = get_field_by_table_name(table_name)
-        # if table_name == "accident_budget":
-        #     breakpoint()
+
         if not exists_in_new_db(table_name):
             continue
         try:
@@ -86,15 +92,14 @@ def get_inserts_and_values(sql):
             continue
         clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
         clean = remove_repeated_replace_into(clean, table_name, field_sequence)
-        # if table_name == "account_custom_user":
-        #     breakpoint()
+
         result.append(
             (
                 clean,
                 get_string_between(clean,VALUES_START_STR,VALUES_END_STR)
             )
         )
-    
+
     return result
 
 def convert_values_in_insert(insert_sql, final_values):
@@ -143,12 +148,12 @@ def take_away_field_from_field_list(table_name, fields = "(`id`,`name`,`count`)"
     for i, field in enumerate(fields):
         if position is None or not (i+1) in position:
             result.append(translate_field_name(table_name, field))
-        
+
     result = f"(`{'`,`'.join(result)}`)"
     return result
 
 
-def take_away_field(values = "(null,null),(null,null)", position = []):
+def take_away_field(table_name, values = "(null,null),(null,null);", position = []):
     values = values[0:-1] # tirando ;
     values = values + ",\n\t("
     values = values.replace("),\n\t(", ",---end---divider(")
@@ -157,7 +162,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
     # termina com ',---end---' e começa com '('
 
     result_values = []
-    
+
     for value in values:
         value = value[1:] # 1: para tirar o (
         actual_type = None
@@ -175,7 +180,7 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                     actual_type = "string"
                     separator = "',"
                     complete_with = "'"
-                else:                           
+                else:
                     actual_type = "not a string"
                     separator = ","
                     complete_with = ""
@@ -203,20 +208,21 @@ def take_away_field(values = "(null,null),(null,null)", position = []):
                 elif clean.count("-") == len(clean):
                     clean = "NULL"
                     complete_with = ""
-                    
+
                 clean_value.append("{}{}{}".format(
                     complete_with,
                     str(clean).replace("'", "[[[[ASPAS]]]]"),
                     complete_with,
-                ))     
-   
+                ))
+
+
             there_is_next = value != "---end---"
-            
+
         clean_value = f"({','.join(clean_value)})"
         result_values.append(clean_value)
-        
-    result_values = ",\n\t".join(result_values) + ";"
-    
+
+    result_values = ",\n\t".join(result_values)
+
     return result_values
 
 def convert_sql(sql):
@@ -228,14 +234,15 @@ def convert_sql(sql):
             continue
         if table_name is None:
             continue
-        
+
         field_sequence = get_field_by_table_name(table_name)
         if field_sequence is None:
             continue
-        
+
         positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
-        values = take_away_field(values, positions_to_remove)[0:-1]
+
+        values = take_away_field(table_name, values, positions_to_remove)
         result = convert_values_in_insert(insert, values)
 
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence.replace("\"", "`") + " ")
