@@ -153,9 +153,9 @@ def take_away_field_from_field_list(table_name, fields = "(`id`,`name`,`count`)"
     return result
 
 
-def take_away_field(table_name, values = "(null,null),(null,null);", position = []):
+def take_away_field(table_name, values = "(null,null),\n\t(null,null);", position = []):
     values = values[0:-1] # tirando ;
-    values = values + ",\n\t("
+    values = values + ",\n\t(" # :? para o último ser descartado [..., ?]
     values = values.replace("),\n\t(", ",---end---divider(")
     values = values.split("divider")
     values.pop() # pop porque o ultimo é vazio
@@ -197,7 +197,6 @@ def take_away_field(table_name, values = "(null,null),(null,null);", position = 
                     complete_with = ""
 
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
-
             clean = clean.replace("--", "[[[[PROHIBITED_DIGIT_1]]]]").replace("---", "[[[[PROHIBITED_DIGIT_2]]]]") # lida com -- e ----
 
             if position is None or not field_position in position:
@@ -243,7 +242,7 @@ def convert_sql(sql):
 
         positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
-
+        # breakpoint()
         values = take_away_field(table_name, values, positions_to_remove)
         result = convert_values_in_insert(insert, values)
 
