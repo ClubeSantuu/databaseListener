@@ -1090,7 +1090,7 @@
         "lmi",
         "legal_text",
         "is_fixed",
-        "\"order\"",
+        "order",
         "use_auxiliary_text",
         "gross_premium",
         "gross_premium_with_discount",

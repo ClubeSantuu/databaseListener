@@ -27,6 +27,7 @@
         "endpoint"
     ],
     "insurance_coverage": [
+        "order",
         "deductible_text_with_compulsory"
     ],
     "insurance_document_config": [

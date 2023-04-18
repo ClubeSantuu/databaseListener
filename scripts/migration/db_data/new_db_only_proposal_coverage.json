@@ -1,0 +1,18 @@
+{
+    "insurance_proposal_coverage": [
+        "id",
+        "enabled",
+        "insurance_proposal_id",
+        "coverage_id",
+        "is_fixed",
+        "gross_premium",
+        "gross_premium_with_discount",
+        "iof",
+        "max_indemnity",
+        "iof_with_discount",
+        "net_premium",
+        "net_premium_with_discount",
+        "coverage_tax",
+        "name"
+    ]
+}

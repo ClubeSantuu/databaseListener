@@ -9,7 +9,7 @@ fd = open('db_data/old_db_structure.json', 'r')
 OLD_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = open('db_data/new_db_proposal.json', 'r')
+fd = open('db_data/new_db_only_proposal_coverage.json', 'r')
 NEW_STRUCTURE = json.load(fd)
 fd.close()
 
