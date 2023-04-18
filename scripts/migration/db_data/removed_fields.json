@@ -1,65 +1,49 @@
 {
-    "account_custom_user": [
-        "is_manager",
-        "is_seller",
-        "is_customer",
-        "created_at",
-        "updated_at",
-        "shop_id",
-        "is_broker",
-        "is_analyst",
-        "is_workshop",
-        "is_appraiser",
-        "insurer_id"
-    ],
-    "core_model": [
-        "description_2",
-        "description_3"
-    ],
-    "core_shop_product": [
-        "program"
-    ],
-    "financial_acquirer_tax": [
-        "program"
-    ],
-    "financial_assurant_config": [
-        "program_id",
-        "endpoint"
-    ],
-    "insurance_coverage": [
-        "order",
-        "deductible_text_with_compulsory"
-    ],
-    "insurance_document_config": [
-        "stipulation_address",
-        "stipulation_cnpj",
-        "stipulation_company_name"
-    ],
-    "insurance_insurer": [
-        "program_v2_id"
-    ],
-    "insurance_program": [
-        "discount_renew",
-        "fixed_payment"
-    ],
-    "insurance_proposal": [
-        "insurance_premium_fix_value",
-        "email_expires_fifteen_days",
-        "has_tax_invoice",
-        "insurance_order_id"
-    ],
-    "insurance_range": [
-        "insurance_order_id",
-        "insurance_premium_is_fix",
-        "insurance_premium_fix_value"
-    ],
-    "voucher_voucher_shop_voucher": [
-        "id"
-    ],
-    "task_task_config": [
-        "task_activity"
-    ],
-    "voucher_voucher": [
-        "shop_id"
-    ]
+  "account_custom_user": [
+    "is_manager",
+    "is_seller",
+    "is_customer",
+    "created_at",
+    "updated_at",
+    "shop_id",
+    "is_broker",
+    "is_analyst",
+    "is_workshop",
+    "is_appraiser",
+    "insurer_id"
+  ],
+  "core_model": ["description_2", "description_3"],
+  "core_shop_product": ["program"],
+  "financial_acquirer_tax": ["program"],
+  "financial_assurant_config": ["program_id", "endpoint"],
+  "insurance_coverage": ["order", "deductible_text_with_compulsory"],
+  "insurance_document_config": [
+    "stipulation_address",
+    "stipulation_cnpj",
+    "stipulation_company_name"
+  ],
+  "insurance_insurer": ["program_v2_id"],
+  "insurance_program": ["discount_renew", "fixed_payment"],
+  "insurance_proposal": [
+    "insurance_premium_fix_value",
+    "email_expires_fifteen_days",
+    "has_tax_invoice",
+    "insurance_order_id"
+  ],
+  "insurance_proposal_coverage": [
+    "deductible_text",
+    "lmi",
+    "legal_text",
+    "order",
+    "use_auxiliary_text",
+    "deductible_text_with_compulsory"
+  ],
+  "insurance_range": [
+    "insurance_order_id",
+    "insurance_premium_is_fix",
+    "insurance_premium_fix_value"
+  ],
+  "voucher_voucher_shop_voucher": ["id"],
+  "task_task_config": ["task_activity"],
+  "voucher_voucher": ["shop_id"]
 }
