@@ -9,7 +9,7 @@ fd = open('db_data/old_db_structure.json', 'r')
 OLD_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = open('db_data/new_db_structure.json', 'r')
+fd = open('db_data/new_db_proposal.json', 'r')
 NEW_STRUCTURE = json.load(fd)
 fd.close()
 
@@ -60,12 +60,11 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
         table_name,
         field_sequence.replace("`","\"")
     )
-    string_to_replace = "*/" + string_to_remove
+    string_first_replace_into = "*/" + string_to_remove
 
-    insert = insert.replace(string_to_replace, "[[[TO_REPLACE]]]")
+    insert = insert.replace(string_first_replace_into, "[[[FIRST_REPLACE_INTO]]]")
     insert = insert.replace(string_to_remove, ",\n\t")
-    insert = insert.replace(string_to_replace, string_to_replace.replace(table_name, table_name).replace("\"", "`"))
-    insert = insert.replace("[[[TO_REPLACE]]]", string_to_replace)
+    insert = insert.replace("[[[FIRST_REPLACE_INTO]]]", string_first_replace_into)
     return insert
 
 def remove_comments(sql):
@@ -84,12 +83,9 @@ def get_inserts_and_values(sql):
         field_sequence = get_field_by_table_name(table_name)
 
         if not exists_in_new_db(translate_table_name(table_name)):
+            print(table_name + " não está presente no novo banco")
             continue
-        try:
-            start = "*/;\nREPLACE INTO \"" + table_name + "\" "+ field_sequence.replace("`", "\"")
-            localized = replace_string_between(localized, start, " VALUES", "") # tirando '(' e ')' dos fields antigos
-        except IndexError:
-            continue
+
         clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
         clean = remove_repeated_replace_into(clean, table_name, field_sequence)
 
@@ -102,7 +98,7 @@ def get_inserts_and_values(sql):
 
     return result
 
-def convert_values_in_insert(insert_sql, final_values):
+def replace_values_in_insert(insert_sql, final_values):
     return replace_string_between(insert_sql, VALUES_START_STR,VALUES_END_STR, final_values)
 
 def replace_name_by_position(fields_to_remove):
@@ -153,9 +149,10 @@ def take_away_field_from_field_list(table_name, fields = "(`id`,`name`,`count`)"
     return result
 
 
-def take_away_field(table_name, values = "(null,null),\n\t(null,null);", position = []):
-    values = values[0:-1] # tirando ;
-    values = values + ",\n\t(" # :? para o último ser descartado [..., ?]
+def take_away_field(table_name, values = "(null, null),\n\t(null, null);", positions_to_remove = []):
+    if values[-1:] == ";":
+        values = values[0:-1] # tirando ;
+    values = values + ",\n\t(" # para o último ser descartado [..., ?]
     values = values.replace("),\n\t(", ", ---end---divider(")
     values = values.split("divider")
     values.pop() # pop porque o ultimo é vazio
@@ -166,7 +163,7 @@ def take_away_field(table_name, values = "(null,null),\n\t(null,null);", positio
     for value in values:
         value = value[1:] # 1: para tirar o (
         actual_type = None
-        clean_value = []
+        clean_values = []
 
         field_position = 0
 
@@ -198,7 +195,7 @@ def take_away_field(table_name, values = "(null,null),\n\t(null,null);", positio
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
             clean = clean.replace("--", "[[[[PROHIBITED_DIGIT_1]]]]").replace("---", "[[[[PROHIBITED_DIGIT_2]]]]") # lida com -- e ----
 
-            if position is None or not field_position in position:
+            if positions_to_remove is None or not field_position in positions_to_remove:
                 if clean == "false":
                     clean = 0
                 elif clean == "true":
@@ -209,7 +206,7 @@ def take_away_field(table_name, values = "(null,null),\n\t(null,null);", positio
                     clean = "NULL"
                     complete_with = ""
 
-                clean_value.append("{}{}{}".format(
+                clean_values.append("{}{}{}".format(
                     complete_with,
                     str(clean).replace("'", "[[[[ASPAS]]]]"),
                     complete_with,
@@ -218,8 +215,8 @@ def take_away_field(table_name, values = "(null,null),\n\t(null,null);", positio
 
             there_is_next = value != "---end---"
 
-        clean_value = f"({','.join(clean_value)})"
-        result_values.append(clean_value)
+        clean_values = f"({','.join(clean_values)})"
+        result_values.append(clean_values)
 
     result_values = ",\n\t".join(result_values)
 
@@ -230,6 +227,7 @@ def convert_sql(sql):
     final_inserts = []
     for insert, values in inserts_and_values:
         table_name = get_table_name_from_insert(insert)
+
         if values is None:
             continue
         if table_name is None:
@@ -241,9 +239,9 @@ def convert_sql(sql):
 
         positions_to_remove = get_field_position_to_remove(table_name)
         field_sequence = take_away_field_from_field_list(table_name, field_sequence, positions_to_remove)
-        # breakpoint()
         values = take_away_field(table_name, values, positions_to_remove)
-        result = convert_values_in_insert(insert, values)
+
+        result = replace_values_in_insert(insert, values)
 
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence.replace("\"", "`") + " ")
         result = result.replace("INTO \"" + table_name + "\"", "INTO `" + translate_table_name(table_name) + "`")
@@ -269,7 +267,7 @@ ALTER TABLE core_model CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 {converted}
 """
 
-with open("db_data/converted.sql", "w") as file:
+with open("db_data/proposal.sql", "w") as file:
     file.write(converted)
 
 # arrumar questão das aspas duplas
