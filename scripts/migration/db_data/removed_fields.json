@@ -32,7 +32,6 @@
   ],
   "insurance_proposal_coverage": [
     "deductible_text",
-    "lmi",
     "legal_text",
     "order",
     "use_auxiliary_text",
