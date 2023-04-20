@@ -831,6 +831,26 @@
         "insuranceclaim_id",
         "insuranceclaimteammember_id"
     ],
+    "insurance_coverage": [
+        "id",
+        "order",
+        "name",
+        "lmi_tax",
+        "deductible_text",
+        "deductible_text_disabled",
+        "legal_text",
+        "is_fixed",
+        "program_id",
+        "resume_text",
+        "code",
+        "deductible"
+    ],
+    "insurance_coverage_item": [
+        "id",
+        "order",
+        "coverage_id",
+        "program_id"
+    ],
     "insurance_coverage_item": [
         "id",
         "order",

@@ -16,7 +16,7 @@
   "core_shop_product": ["program"],
   "financial_acquirer_tax": ["program"],
   "financial_assurant_config": ["program_id", "endpoint"],
-  "insurance_coverage": ["order", "deductible_text_with_compulsory"],
+  "insurance_coverage": ["deductible_text_with_compulsory"],
   "insurance_document_config": [
     "stipulation_address",
     "stipulation_cnpj",
