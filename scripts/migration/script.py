@@ -1,7 +1,7 @@
 import json
 import re
 
-fd = open('db_data/proposal_coverages.sql', 'r')
+fd = open('db_data/converted_olddb.sql', 'r')
 SQL = fd.read()
 fd.close()
 
@@ -9,7 +9,7 @@ fd = open('db_data/old_db_structure.json', 'r')
 OLD_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = open('db_data/new_db_only_proposal_coverage.json', 'r')
+fd = open('db_data/new_db_structure.json', 'r')
 NEW_STRUCTURE = json.load(fd)
 fd.close()
 
@@ -226,7 +226,6 @@ def convert_sql(sql):
     inserts_and_values = get_inserts_and_values(sql)
     final_inserts = []
     for insert, values in inserts_and_values:
-        breakpoint()
         table_name = get_table_name_from_insert(insert)
 
         if values is None:
@@ -268,7 +267,7 @@ ALTER TABLE core_model CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 {converted}
 """
 
-with open("db_data/converted_proposal_coverages.sql", "w") as file:
+with open("db_data/result.sql", "w") as file:
     file.write(converted)
 
 # arrumar questão das aspas duplas

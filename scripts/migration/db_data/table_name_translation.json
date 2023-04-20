@@ -18,5 +18,8 @@
     "service_order_sosmechanic": "sos_bike_sosmechanic",
     "service_order_sosorder": "sos_bike_sosorder",
     "service_order_sosorderstatistics": "sos_bike_sosorderstatistics",
-    "service_order_sosqueue": "sos_bike_sosqueue"
+    "service_order_sosqueue": "sos_bike_sosqueue",
+    "insuranceclaim": "old_insurance_claim_insuranceclaim",
+    "insurance_claim_budget": "old_insurance_claim_insuranceclaimbudget",
+    "insurance_claim_comment": "old_insurance_claim_insuranceclaimcomment"
 }

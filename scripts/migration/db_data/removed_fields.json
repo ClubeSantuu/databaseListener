@@ -33,7 +33,6 @@
   "insurance_proposal_coverage": [
     "deductible_text",
     "legal_text",
-    "order",
     "use_auxiliary_text",
     "deductible_text_with_compulsory"
   ],

@@ -27,9 +27,6 @@
     "category": "category_name",
     "model": "model_name"
   },
-  "insurance_proposal_coverage": {
-    "lmi": "max_indemnity"
-  },
   "program_images_upload": {
     "image_type": "identifier"
   },
