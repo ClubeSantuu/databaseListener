@@ -1,7 +1,20 @@
 import json
 import re
+import codecs
 
-fd = open('db_data/converted_olddb.sql', 'r')
+
+file_name = "converted_olddb.sql"
+
+with open("db_data/" + file_name, 'r') as file:
+        
+        sql = file.read()
+        sql = sql.encode("utf-8").decode("utf-8")
+        
+        #saved = unidecode(sql, "preserve")
+        with codecs.open("db_data/converted_" + file_name, 'w', "utf-8") as f:
+            f.write(sql)
+
+fd = open('db_data/'+ 'converted_' + file_name, 'r')
 SQL = fd.read()
 fd.close()
 
@@ -24,7 +37,7 @@ fd.close()
 INSERT_START_STR = "-- Copiando dados para a tabela public."
 INSERT_END_STR = "ENABLE KEYS */;"
 VALUES_START_STR = " VALUES\n\t"
-VALUES_END_STR = ";\n/*!"
+VALUES_END_STR = ";\n"
 
 def get_string_between(text, val_start, val_end):
     try:
@@ -43,8 +56,8 @@ def replace_string_between(text, val_start, val_end, final):
         return ""
     return f"{start}{val_start}{final}{val_end}{end}"
 
-def get_table_name_from_insert(insert):
-    return get_string_between(insert, INSERT_START_STR, ":")
+#def get_table_name_from_insert(insert):
+#    return get_string_between(insert, INSERT_START_STR, ":")
 
 def get_field_by_table_name(table_name):
     try:
@@ -67,10 +80,10 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
     insert = insert.replace("[[[FIRST_REPLACE_INTO]]]", string_first_replace_into)
     return insert
 
-def remove_comments(sql):
-    sql = re.sub(r'--.*\n', "", sql)
-    sql = re.sub(r'/\*.*\*/;', "", sql)
-    return sql
+#def remove_comments(sql):
+#    sql = re.sub(r'--.*\n', "", sql)
+#    sql = re.sub(r'/\*.*\*/;', "", sql)
+#    return sql
 
 def get_inserts_and_values(sql):
 
@@ -86,13 +99,14 @@ def get_inserts_and_values(sql):
             print(table_name + " não está presente no novo banco")
             continue
 
-        clean = f"{INSERT_START_STR}{localized}{INSERT_END_STR}"
+        clean = get_string_between(localized, "DISABLE KEYS */;", "/*!40000 ALTER TABLE \"" + table_name)
         clean = remove_repeated_replace_into(clean, table_name, field_sequence)
 
         result.append(
             (
                 clean,
-                get_string_between(clean,VALUES_START_STR,VALUES_END_STR)
+                get_string_between(clean,VALUES_START_STR,VALUES_END_STR),
+                table_name
             )
         )
 
@@ -193,7 +207,7 @@ def take_away_field(table_name, values = "(null, null),\n\t(null, null);", posit
                     complete_with = ""
 
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
-            clean = clean.replace("--", "[[[[PROHIBITED_DIGIT_1]]]]").replace("---", "[[[[PROHIBITED_DIGIT_2]]]]") # lida com -- e ----
+            #clean = clean.replace("--", "[[[[PROHIBITED_DIGIT_1]]]]").replace("---", "[[[[PROHIBITED_DIGIT_2]]]]") # lida com -- e ----
 
             if positions_to_remove is None or not field_position in positions_to_remove:
                 if clean == "false":
@@ -208,7 +222,7 @@ def take_away_field(table_name, values = "(null, null),\n\t(null, null);", posit
 
                 clean_values.append("{}{}{}".format(
                     complete_with,
-                    str(clean).replace("'", "[[[[ASPAS]]]]"),
+                    str(clean).replace("'", "\\\'"),
                     complete_with,
                 ))
 
@@ -225,8 +239,9 @@ def take_away_field(table_name, values = "(null, null),\n\t(null, null);", posit
 def convert_sql(sql):
     inserts_and_values = get_inserts_and_values(sql)
     final_inserts = []
-    for insert, values in inserts_and_values:
-        table_name = get_table_name_from_insert(insert)
+    for insert, values, table_name in inserts_and_values:
+
+        print("Em " + table_name + "...")
 
         if values is None:
             continue
@@ -245,6 +260,7 @@ def convert_sql(sql):
 
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence.replace("\"", "`") + " ")
         result = result.replace("INTO \"" + table_name + "\"", "INTO `" + translate_table_name(table_name) + "`")
+        
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
@@ -254,9 +270,10 @@ REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
 converted = convert_sql(SQL)
-converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\\\'')
-converted = converted.replace("[[[[PROHIBITED_DIGIT_1]]]]","--")
-converted = converted.replace("[[[[PROHIBITED_DIGIT_2]]]]","---")
+#converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\\\'')
+#converted = converted.replace("[[[[PROHIBITED_DIGIT_1]]]]","--")
+#converted = converted.replace("[[[[PROHIBITED_DIGIT_2]]]]","---")
+
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
 SET time_zone = '+0:00';
