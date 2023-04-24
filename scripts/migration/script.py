@@ -1,36 +1,26 @@
 import json
 import re
 import codecs
+import psutil
 
 
-file_name = "converted_olddb.sql"
-
-with open("db_data/" + file_name, 'r') as file:
-        
-        sql = file.read()
-        sql = sql.encode("utf-8").decode("utf-8")
-        
-        #saved = unidecode(sql, "preserve")
-        with codecs.open("db_data/converted_" + file_name, 'w', "utf-8") as f:
-            f.write(sql)
-
-fd = open('db_data/'+ 'converted_' + file_name, 'r')
+fd = codecs.open('db_data/test.sql', 'r', "utf-8")
 SQL = fd.read()
 fd.close()
 
-fd = open('db_data/old_db_structure.json', 'r')
+fd = codecs.open('db_data/old_db_structure.json', 'r', "utf-8")
 OLD_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = open('db_data/new_db_structure.json', 'r')
+fd = codecs.open('db_data/new_db_structure.json', 'r', "utf-8")
 NEW_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = open('db_data/table_name_translation.json', 'r')
+fd = codecs.open('db_data/table_name_translation.json', 'r', "utf-8")
 TABLE_TRANSLATION = json.load(fd)
 fd.close()
 
-fd = open('db_data/field_name_translation.json', 'r')
+fd = codecs.open('db_data/field_name_translation.json', 'r', "utf-8")
 FIELD_TRANSLATION = json.load(fd)
 fd.close()
 
@@ -56,9 +46,6 @@ def replace_string_between(text, val_start, val_end, final):
         return ""
     return f"{start}{val_start}{final}{val_end}{end}"
 
-#def get_table_name_from_insert(insert):
-#    return get_string_between(insert, INSERT_START_STR, ":")
-
 def get_field_by_table_name(table_name):
     try:
         table_structure = OLD_STRUCTURE[table_name]
@@ -80,17 +67,16 @@ def remove_repeated_replace_into(insert, table_name, field_sequence):
     insert = insert.replace("[[[FIRST_REPLACE_INTO]]]", string_first_replace_into)
     return insert
 
-#def remove_comments(sql):
-#    sql = re.sub(r'--.*\n', "", sql)
-#    sql = re.sub(r'/\*.*\*/;', "", sql)
-#    return sql
-
 def get_inserts_and_values(sql):
 
     result = []
-    strs = sql.split(INSERT_START_STR)[1:] # [0] > antes do primeiro insert
+    strs = sql.split(INSERT_START_STR)
+    strs_ = strs[1:] # [0] > antes do primeiro insert
 
-    for text in strs:
+    print("Iniciando...")
+    print("RAM: " + str(psutil.virtual_memory().percent) + "%")
+
+    for text in strs_:
         localized = text.split(INSERT_END_STR)[0]
         table_name = localized.split(":")[0]
         field_sequence = get_field_by_table_name(table_name)
@@ -207,7 +193,6 @@ def take_away_field(table_name, values = "(null, null),\n\t(null, null);", posit
                     complete_with = ""
 
             clean, value =  value.split(separator, 1) # põe o valor em clean e o resto fica em field
-            #clean = clean.replace("--", "[[[[PROHIBITED_DIGIT_1]]]]").replace("---", "[[[[PROHIBITED_DIGIT_2]]]]") # lida com -- e ----
 
             if positions_to_remove is None or not field_position in positions_to_remove:
                 if clean == "false":
@@ -232,11 +217,13 @@ def take_away_field(table_name, values = "(null, null),\n\t(null, null);", posit
         clean_values = f"({','.join(clean_values)})"
         result_values.append(clean_values)
 
-    result_values = ",\n\t".join(result_values)
+    result_values = ",\n\t".join(result_values)    
+    print("RAM: " + str(psutil.virtual_memory().percent) + "%")
 
     return result_values
 
 def convert_sql(sql):
+
     inserts_and_values = get_inserts_and_values(sql)
     final_inserts = []
     for insert, values, table_name in inserts_and_values:
@@ -264,15 +251,12 @@ def convert_sql(sql):
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
-fd = open('db_data/removed_fields.json', 'r')
+fd = codecs.open('db_data/removed_fields.json', 'r')
 REMOVED_FIELDS = json.load(fd)
 REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
 converted = convert_sql(SQL)
-#converted = remove_comments(converted).replace("[[[[ASPAS]]]]", '\\\'')
-#converted = converted.replace("[[[[PROHIBITED_DIGIT_1]]]]","--")
-#converted = converted.replace("[[[[PROHIBITED_DIGIT_2]]]]","---")
 
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;
@@ -284,8 +268,5 @@ ALTER TABLE core_model CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 {converted}
 """
 
-with open("db_data/result.sql", "w") as file:
+with codecs.open("db_data/result.sql", "w", "utf-8") as file:
     file.write(converted)
-
-# arrumar questão das aspas duplas
-# field_list repetido
