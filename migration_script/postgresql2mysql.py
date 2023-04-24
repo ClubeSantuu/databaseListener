@@ -4,23 +4,23 @@ import codecs
 import psutil
 
 
-fd = codecs.open('db_data/test.sql', 'r', "utf-8")
+fd = codecs.open('../db_data/test.sql', 'r', "utf-8")
 SQL = fd.read()
 fd.close()
 
-fd = codecs.open('db_data/old_db_structure.json', 'r', "utf-8")
+fd = codecs.open('db_utils_json/old_db_structure.json', 'r', "utf-8")
 OLD_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = codecs.open('db_data/new_db_structure.json', 'r', "utf-8")
+fd = codecs.open('db_utils_json/new_db_structure.json', 'r', "utf-8")
 NEW_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = codecs.open('db_data/table_name_translation.json', 'r', "utf-8")
+fd = codecs.open('db_utils_json/table_name_translation.json', 'r', "utf-8")
 TABLE_TRANSLATION = json.load(fd)
 fd.close()
 
-fd = codecs.open('db_data/field_name_translation.json', 'r', "utf-8")
+fd = codecs.open('db_utils_json/field_name_translation.json', 'r', "utf-8")
 FIELD_TRANSLATION = json.load(fd)
 fd.close()
 
@@ -251,7 +251,7 @@ def convert_sql(sql):
         final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
-fd = codecs.open('db_data/removed_fields.json', 'r')
+fd = codecs.open('db_utils_json/removed_fields.json', 'r')
 REMOVED_FIELDS = json.load(fd)
 REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
@@ -268,5 +268,5 @@ ALTER TABLE core_model CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 {converted}
 """
 
-with codecs.open("db_data/result.sql", "w", "utf-8") as file:
+with codecs.open("../db_data/result.sql", "w", "utf-8") as file:
     file.write(converted)

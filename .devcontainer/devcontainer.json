@@ -1,0 +1,58 @@
+{
+	"name": "DatabaseListener",
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "database-listener",
+	"workspaceFolder": "/app",
+	"shutdownAction": "stopCompose",
+	"settings": {
+		"python.analysis.typeCheckingMode": "basic",
+		"python.pythonPath": "/usr/local/bin/python",
+		"python.linting.enabled": true,
+		"python.linting.pylintEnabled": true,
+		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+		"workbench.iconTheme": "material-icon-theme",
+		"workbench.colorTheme": "One Dark Pro Darker",
+		"cSpell.language": "en,pt,pt-BR",
+		"workbench.productIconTheme": "fluent-icons"
+	},
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"donjayamanne.python-extension-pack",
+		"github.vscode-pull-request-github",
+		"eamodio.gitlens",
+		"mhutchie.git-graph",
+		"gruntfuggly.todo-tree",
+		"wayou.vscode-todo-highlight",
+		"rokoroku.vscode-theme-darcula",
+		"zhuangtongfa.material-theme",
+		"pkief.material-icon-theme",
+		"formulahendry.auto-rename-tag",
+		"formulahendry.auto-close-tag",
+		"mikestead.dotenv",
+		"streetsidesoftware.code-spell-checker",
+		"streetsidesoftware.code-spell-checker-portuguese",
+		"ms-azuretools.vscode-docker",
+		"redhat.vscode-yaml",
+		"esbenp.prettier-vscode",
+		"yzhang.markdown-all-in-one",
+		"miguelsolorio.fluent-icons",
+		"dracula-theme.theme-dracula",
+		"ms-vscode.makefile-tools",
+		"dzhavat.bracket-pair-toggler",
+		"Arjun.swagger-viewer"
+	]
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [
+	// 	8000
+	// ]
+}
