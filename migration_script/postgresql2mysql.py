@@ -5,6 +5,7 @@ import psutil
 import sys
 
 src_file = sys.argv[1]
+final_file = sys.argv[2]
 
 fd = codecs.open('db_data/'+src_file, 'r', "utf-8")
 SQL = fd.read()
@@ -270,5 +271,5 @@ ALTER TABLE core_model CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 {converted}
 """
 
-with codecs.open("db_data/result.sql", "w", "utf-8") as file:
+with codecs.open("db_data/"+final_file, "w", "utf-8") as file:
     file.write(converted)
