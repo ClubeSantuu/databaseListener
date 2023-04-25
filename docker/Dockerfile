@@ -1,18 +1,20 @@
-FROM mysql:8.0
+FROM mysql:8-debian
 
-
-RUN curl -O https://bootstrap.pypa.io/get-pip.py \
-    && python3 get-pip.py \
+RUN apt update && \
+    apt install libpq-dev libcurl4-openssl-dev libssl-dev default-libmysqlclient-dev gcc make libjpeg-dev curl git -y \
+    && apt install python3-pip -y \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --upgrade pip && pip3 install poetry
+RUN pip install -U pip && pip install poetry
 
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock /app/
 
 RUN poetry config virtualenvs.create false \
-    && cd app \
+    && cd /app \
     && poetry install --no-dev --no-interaction --no-ansi \
     && poetry install
 
