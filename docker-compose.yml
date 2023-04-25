@@ -12,4 +12,4 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./db_data:/app/db_data
+      - .:/app
