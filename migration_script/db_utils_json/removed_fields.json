@@ -29,6 +29,9 @@
     "email_expires_fifteen_days",
     "has_tax_invoice",
     "insurance_order_id"
+  ],  
+  "insurance_proposal_coverage": [
+    "use_auxiliary_text"
   ],
   "insurance_range": [
     "insurance_order_id",

@@ -3,6 +3,7 @@ import re
 import codecs
 import psutil
 import sys
+import random
 
 src_file = sys.argv[1]
 final_file = sys.argv[2]
@@ -30,6 +31,7 @@ fd.close()
 INSERT_START_STR = "-- Copiando dados para a tabela public."
 INSERT_END_STR = "ENABLE KEYS */;"
 VALUES_START_STR = " VALUES\n\t"
+VALUES_END_STR_INTERN = ";\nREPLACE INTO"
 VALUES_END_STR = ";\n"
 
 def get_string_between(text, val_start, val_end):
@@ -94,7 +96,7 @@ def get_inserts_and_values(sql):
         result.append(
             (
                 clean,
-                get_string_between(clean,VALUES_START_STR,VALUES_END_STR),
+                get_string_between(clean,VALUES_START_STR,VALUES_END_STR_INTERN),
                 table_name
             )
         )
@@ -153,6 +155,8 @@ def take_away_field_from_field_list(table_name, fields = "(`id`,`name`,`count`)"
 
 
 def take_away_field(table_name, values = "(null, null),\n\t(null, null);", positions_to_remove = []):
+    if values[-2:] == ";\n":
+        values = values[0:-2] # tirando ;
     if values[-1:] == ";":
         values = values[0:-1] # tirando ;
     values = values + ",\n\t(" # para o último ser descartado [..., ?]
@@ -251,7 +255,17 @@ def convert_sql(sql):
         result = replace_string_between(result, "INTO \"" + table_name + "\" ", "VALUES", field_sequence.replace("\"", "`") + " ")
         result = result.replace("INTO \"" + table_name + "\"", "INTO `" + translate_table_name(table_name) + "`")
         
-        final_inserts.append(result)
+        # Not only one REPLACE INTO
+        # result = result.replace("),\n\t(", ");\n\tREPLACE INTO `" + translate_table_name(table_name) + "` " + field_sequence.replace("\"", "`") + " VALUES (")
+        # result = result[0:1000] + "".join([
+        #     (
+        #         ");\n\tREPLACE INTO `" + translate_table_name(table_name) + "` " + field_sequence.replace("\"", "`") + " VALUES (" + x 
+        #         if random.random() < 0.0005
+        #         else "),\n\t(" + x
+        #     ) for x in result[1000:].split("),\n\t(")
+        # ])[0: -5] # tirando ),\n\t(
+        
+        # final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
 fd = codecs.open('migration_script/db_utils_json/removed_fields.json', 'r')
@@ -259,7 +273,7 @@ REMOVED_FIELDS = json.load(fd)
 REMOVED_FIELDS = replace_name_by_position(REMOVED_FIELDS)
 fd.close()
 
-converted = convert_sql(SQL)
+converted = convert_sql(SQL.replace("\r", ""))
 
 converted = f"""
 SET FOREIGN_KEY_CHECKS=0;

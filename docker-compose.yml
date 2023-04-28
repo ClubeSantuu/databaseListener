@@ -10,6 +10,14 @@ services:
       MYSQL_ROOT_PASSWORD: 'mysql'
       MYSQL_DATABASE: 'ecosystemdb'
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - .:/app
+    networks:
+      - rede
+
+
+networks:
+  rede:
+    external: true
+    name: x
