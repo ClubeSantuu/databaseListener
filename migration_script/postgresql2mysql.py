@@ -46,7 +46,8 @@ def exists_in_new_db(table_name):
 def replace_string_between(text, val_start, val_end, final):
     try:
         start = text.split(val_start, 1)[0]
-        end = text.split(val_end, 1)[1]
+        position_end = text.rfind(val_end)
+        end = text[position_end + len(val_end):]
     except IndexError:
         return ""
     return f"{start}{val_start}{final}{val_end}{end}"
@@ -234,7 +235,6 @@ def convert_sql(sql):
     inserts_and_values = get_inserts_and_values(sql)
     final_inserts = []
     for insert, values, table_name in inserts_and_values:
-
         print("Em " + table_name + "...")
 
         if values is None:
@@ -257,15 +257,16 @@ def convert_sql(sql):
         
         # Not only one REPLACE INTO
         # result = result.replace("),\n\t(", ");\n\tREPLACE INTO `" + translate_table_name(table_name) + "` " + field_sequence.replace("\"", "`") + " VALUES (")
-        # result = result[0:1000] + "".join([
-        #     (
-        #         ");\n\tREPLACE INTO `" + translate_table_name(table_name) + "` " + field_sequence.replace("\"", "`") + " VALUES (" + x 
-        #         if random.random() < 0.0005
-        #         else "),\n\t(" + x
-        #     ) for x in result[1000:].split("),\n\t(")
-        # ])[0: -5] # tirando ),\n\t(
+        average_number_of_lines_without_replace = 2000
+        result = result[0:1000] + "".join([
+            (
+                ");\n\tREPLACE INTO `" + translate_table_name(table_name) + "` " + field_sequence.replace("\"", "`") + " VALUES (" + x 
+                if random.random() < 1/average_number_of_lines_without_replace
+                else "),\n\t(" + x
+            ) for x in result[1000:].split("),\n\t(")
+        ])[5:] # tirando ),\n\t(
         
-        # final_inserts.append(result)
+        final_inserts.append(result)
     return "\n\n".join(final_inserts)
 
 fd = codecs.open('migration_script/db_utils_json/removed_fields.json', 'r')
