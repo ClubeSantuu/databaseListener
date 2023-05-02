@@ -15,7 +15,6 @@
   "core_model": ["description_2", "description_3"],
   "core_shop_product": ["program"],
   "financial_acquirer_tax": ["program"],
-  "financial_assurant_config": ["program_id", "endpoint"],
   "insurance_coverage": ["deductible_text_with_compulsory"],
   "insurance_document_config": [
     "stipulation_address",
