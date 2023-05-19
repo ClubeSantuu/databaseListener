@@ -19,6 +19,10 @@
     "service_order_sosorder": "sos_bike_sosorder",
     "service_order_sosorderstatistics": "sos_bike_sosorderstatistics",
     "service_order_sosqueue": "sos_bike_sosqueue",
+    "speciallist_cpflist": "special_list_cpflist", 
+    "speciallist_emaillist": "special_list_emaillist", 
+    "speciallist_namelist": "special_list_namelist", 
+    "speciallist_phonelist": "special_list_phonelist", 
     "insuranceclaim": "old_insurance_claim_insuranceclaim",
     "insurance_claim_budget": "old_insurance_claim_insuranceclaimbudget",
     "insurance_claim_comment": "old_insurance_claim_insuranceclaimcomment"

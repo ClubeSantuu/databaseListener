@@ -16,7 +16,7 @@ fd = codecs.open('migration_script/db_utils_json/old_db_structure.json', 'r', "u
 OLD_STRUCTURE = json.load(fd)
 fd.close()
 
-fd = codecs.open('migration_script/db_utils_json/new_db_structure.json', 'r', "utf-8")
+fd = codecs.open('migration_script/db_utils_json/new_db_structure_only_special_list.json', 'r', "utf-8")
 NEW_STRUCTURE = json.load(fd)
 fd.close()
 

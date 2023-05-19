@@ -1487,6 +1487,22 @@
         "lane_id",
         "order_id"
     ],
+    "special_list_cpflist": [
+        "id",
+        "cpf"
+    ],
+    "special_list_emaillist": [
+        "id",
+        "email"
+    ],
+    "special_list_namelist": [
+        "id",
+        "name"
+    ],
+    "special_list_phonelist": [
+        "id",
+        "phone"
+    ],
     "task_celerytask": [
         "id",
         "task_id",
